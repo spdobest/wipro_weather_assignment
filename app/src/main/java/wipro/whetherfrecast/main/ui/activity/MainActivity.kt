@@ -1,4 +1,4 @@
-package wipro.whetherfrecast.main
+package wipro.whetherfrecast.main.ui.activity
 
 import android.os.Bundle
 import android.view.MenuItem
@@ -6,6 +6,7 @@ import androidx.appcompat.app.ActionBar
 import androidx.appcompat.app.AppCompatActivity
 import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.activity_main.*
+import wipro.whetherfrecast.main.R
 import wipro.whetherfrecast.main.listeners.ToolbarListener
 import wipro.whetherfrecast.main.ui.fragments.WeatherFragment
 
