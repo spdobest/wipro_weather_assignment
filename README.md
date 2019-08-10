@@ -1,8 +1,9 @@
 # Weather Open API Implementation Details  
   
 ## APK FILE OF this application
-https://github.com/spdobest/wipro_weather_assignment/blob/master/apkFile/weatherApp.apk
-Its assignment from wipro internal team.  
+https://github.com/spdobest/wipro_weather_assignment/blob/master/apkFile/weatherApp.apk  
+  
+## Its assignment from wipro internal team.    
  ### SCREENSHOTS OF 
 ![alt tag](https://github.com/spdobest/wipro_weather_assignment/blob/master/screenshots/ss3.png)
 ### AUTOFILL ON TYPE CITY NAME  
