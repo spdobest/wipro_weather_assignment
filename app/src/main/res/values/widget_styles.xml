@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <style name="styleMatch" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+    <style name="styleWrap" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">wrap_content</item>
+        <item name="android:background">@android:color/white</item>
+    </style>
+
+    <style name="toolbarStyleDark" >
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">?attr/actionBarSize</item>
+        <item name="android:minHeight">?attr/actionBarSize</item>
+        <item name="android:layout_gravity">top</item>
+        <item name="android:fontFamily">@font/roboto_bold</item>
+        <item name="android:background">@color/colorPrimaryDark</item>
+    </style>
+
+</resources>
