@@ -35,7 +35,7 @@ class MainActivity : AppCompatActivity(), ToolbarListener {
     }
 
     override fun setToolbarTitle(title: String) {
-        toolbar.setTitle(title)
+        toolbar.title = title
     }
 
     override fun setToolbarVisibility(value: Int) {
@@ -44,8 +44,8 @@ class MainActivity : AppCompatActivity(), ToolbarListener {
 
     fun setupToolbar() {
         setSupportActionBar(toolbar)
-        getSupportActionBar()?.setDisplayHomeAsUpEnabled(true)
-        getSupportActionBar()?.setDisplayShowHomeEnabled(true)
+        supportActionBar?.setDisplayHomeAsUpEnabled(true)
+        supportActionBar?.setDisplayShowHomeEnabled(true)
         val ab: ActionBar? = supportActionBar
         with(ab) {
             this?.setHomeAsUpIndicator(R.drawable.ic_arrow_back_white_24dp)
@@ -54,13 +54,13 @@ class MainActivity : AppCompatActivity(), ToolbarListener {
     }
 
     override fun onOptionsItemSelected(item: MenuItem): Boolean {
-        when (item.getItemId()) {
+        return when (item.itemId) {
             android.R.id.home -> {
                 finish()
-                return true
+                true
             }
 
-            else -> return super.onOptionsItemSelected(item)
+            else -> super.onOptionsItemSelected(item)
         }
     }
 
