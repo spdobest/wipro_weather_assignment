@@ -42,7 +42,7 @@ object BindingAdapters {
     @JvmStatic
     @BindingAdapter("errorMessage")
     fun showErrorMessage(view: AppCompatTextView, message: String) {
-        message?.let {
+        message.let {
             view.text = message
         }
     }
@@ -70,7 +70,7 @@ object BindingAdapters {
     @JvmStatic
     @BindingAdapter("weatherDescription")
     fun showWeatherDescription(view: AppCompatTextView, message: String) {
-        message?.let {
+        message.let {
             view.text = message
         }
     }
@@ -82,7 +82,7 @@ object BindingAdapters {
             "Rain" -> {
                 cardview.setBackgroundColor(
                     ContextCompat.getColor(
-                        cardview.getContext(),
+                        cardview.context,
                         wipro.whetherfrecast.main.R.color.white
                     )
                 )
@@ -90,7 +90,7 @@ object BindingAdapters {
             "Clouds" -> {
                 cardview.setBackgroundColor(
                     ContextCompat.getColor(
-                        cardview.getContext(),
+                        cardview.context,
                         wipro.whetherfrecast.main.R.color.card_cloudy
                     )
                 )
@@ -98,7 +98,7 @@ object BindingAdapters {
             else -> {
                 cardview.setBackgroundColor(
                     ContextCompat.getColor(
-                        cardview.getContext(),
+                        cardview.context,
                         wipro.whetherfrecast.main.R.color.card_sunny
                     )
                 )

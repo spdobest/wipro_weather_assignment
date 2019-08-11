@@ -24,13 +24,13 @@ class MainActivity : AppCompatActivity(), ToolbarListener {
          * Once SCreen rotate, it will call once
          */
         if (savedInstanceState == null) {
-            loadWeatherFragment()
+            loadWeatherFragment(WeatherFragment.newInstance())
         }
     }
 
-    fun loadWeatherFragment() {
+    fun loadWeatherFragment(weatherFragment: WeatherFragment) {
         supportFragmentManager.beginTransaction()
-            .add(R.id.fragmentContainer, WeatherFragment.newInstance(), WeatherFragment.TAG).commit()
+            .add(R.id.fragmentContainer,weatherFragment , WeatherFragment.TAG).commit()
         WeatherFragment()
     }
 
@@ -64,10 +64,10 @@ class MainActivity : AppCompatActivity(), ToolbarListener {
         }
     }
 
-    fun showError(error: String = "ERROR") {
+    fun showError(error: String = "ERROR", duration: Int = Snackbar.LENGTH_SHORT) {
         val snackBar = Snackbar.make(
             findViewById(R.id.constraintLayoutParent),
-            error, Snackbar.LENGTH_LONG
+            error, duration
         )
         snackBar.show()
     }

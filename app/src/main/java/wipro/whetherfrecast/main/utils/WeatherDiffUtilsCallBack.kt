@@ -9,22 +9,20 @@ class WeatherDiffUtilsCallBack(
 ) : DiffUtil.Callback() {
 
     override fun areItemsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        return oldWeatherDetailsList.get(oldItemPosition).dt == newWeatherDetailsList.get(
-            newItemPosition
-        ).dt
+        return oldWeatherDetailsList[oldItemPosition].dt == newWeatherDetailsList[newItemPosition].dt
     }
 
     override fun getOldListSize(): Int {
-        return oldWeatherDetailsList?.size
+        return oldWeatherDetailsList.size
     }
 
     override fun getNewListSize(): Int {
-        return newWeatherDetailsList?.size
+        return newWeatherDetailsList.size
     }
 
     override fun areContentsTheSame(oldItemPosition: Int, newItemPosition: Int): Boolean {
-        val oldWeather: WeatherDetails = oldWeatherDetailsList?.get(oldItemPosition)
-        val newWeather: WeatherDetails = newWeatherDetailsList?.get(newItemPosition)
+        val oldWeather: WeatherDetails = oldWeatherDetailsList.get(oldItemPosition)
+        val newWeather: WeatherDetails = newWeatherDetailsList.get(newItemPosition)
 
         return oldWeather.dt_txt === newWeather.dt_txt
     }

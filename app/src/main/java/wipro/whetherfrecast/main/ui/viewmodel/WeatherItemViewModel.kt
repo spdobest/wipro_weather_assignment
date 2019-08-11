@@ -4,6 +4,7 @@ package wipro.whetherfrecast.main.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import wipro.whetherfrecast.main.ui.model.*
 import wipro.whetherfrecast.main.utils.CommonUtils
+import kotlin.math.round
 
 class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
@@ -11,10 +12,11 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
     lateinit var weather: Weather
     lateinit var wind: Wind
     lateinit var rain: Rain
+    lateinit var cloud: Clouds
     lateinit var dateTime: String
 
     companion object {
-        val TAG = "TopMovieViewModel"
+        const val TAG = "TopMovieViewModel"
     }
 
     init {
@@ -22,6 +24,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
             main = it.main
             wind = it.wind
             rain = it.rain
+            cloud = it.clouds
             dateTime = it.dt_txt
 
             it.weather?.let {
@@ -76,7 +79,9 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
         var tempeture = ""
         main?.let {
             tempeture =
-                "MAX " + it.temp_min.toString() + 0x00B0.toChar() + " - MIN " + it.temp_min.toString() + 0x00B0.toChar()
+                "MAX " + CommonUtils.getCelciousFromKalvin(it.temp_max) + " - MIN " + CommonUtils.getCelciousFromKalvin(
+                    it.temp_min
+                )
         }
         return tempeture
     }
@@ -85,9 +90,17 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
         var windDetails = "--"
         wind?.let {
             windDetails =
-                "SPEED " + it.speed.toString() + "\n DEGREE " + it.deg.toString() + 0x00B0.toChar()
+                "Speed " + it.speed.toString() + " m/sec" + "\n Direction " + round((it.deg * 100) / 100).toString() + 0x00B0.toChar()
         }
         return windDetails
+    }
+
+    fun getCloudyness(): String {
+        var cloudyNess = "--"
+        cloud?.let {
+            cloudyNess = "Cloudiness \n${it.all}%"
+        }
+        return cloudyNess
     }
 
     fun getWeatherDetailsMessage(): String {
@@ -98,7 +111,9 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
         main?.let {
             weatherDescription =
-                weatherDescription + "High " + it.temp_min.toString() + 0x00B0.toChar() + " - Low " + it.temp_min.toString() + 0x00B0.toChar()
+                weatherDescription + "High " + CommonUtils.getCelciousFromKalvin(it.temp_max) + " - Low " + CommonUtils.getCelciousFromKalvin(
+                    it.temp_min
+                )
         }
 
         wind?.let {
@@ -108,15 +123,11 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
         main?.let {
             weatherDescription =
-                weatherDescription + " With Humidity " + it.humidity
+                weatherDescription + " With Humidity " + it.humidity + " Pressure " + it.pressure + "hpa"
+
         }
+
 
         return weatherDescription
-    }
-
-    fun getWeatherColor(): String {
-        weather?.let {
-            return it.main
-        }
     }
 }

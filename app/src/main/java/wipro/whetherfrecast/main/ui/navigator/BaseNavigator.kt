@@ -1,4 +1,4 @@
-package wipro.whetherfrecast.main.ui.fragments
+package wipro.whetherfrecast.main.ui.navigator
 
 import wipro.whetherfrecast.main.ui.model.WeatherDetails
 

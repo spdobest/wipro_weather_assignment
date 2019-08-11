@@ -10,31 +10,43 @@ import androidx.databinding.Bindable
 import androidx.databinding.Observable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
-import retrofit2.Call
-import retrofit2.Callback
-import retrofit2.Response
-import wipro.whetherfrecast.main.ui.activity.MainActivity
 import wipro.whetherfrecast.main.R
 import wipro.whetherfrecast.main.network.ApiServiceInterface
+import wipro.whetherfrecast.main.network.ResponseCallBack
 import wipro.whetherfrecast.main.ui.adapter.WeatherAdapter
-import wipro.whetherfrecast.main.ui.base.BaseNavigator
 import wipro.whetherfrecast.main.ui.base.BaseViewModel
 import wipro.whetherfrecast.main.ui.model.WeatherDetails
 import wipro.whetherfrecast.main.ui.model.WeatherResponse
+import wipro.whetherfrecast.main.ui.navigator.BaseNavigator
+import wipro.whetherfrecast.main.ui.repository.WeatherRepository
 import wipro.whetherfrecast.main.utils.CommonUtils
+import javax.inject.Inject
 
 
-class WeatherViewModel constructor(application: Application) : BaseViewModel<BaseNavigator>(application), Observable{
+class WeatherViewModel constructor(application: Application) :
+    BaseViewModel<BaseNavigator>(application),
+    Observable, ResponseCallBack<Any> {
 
-    var cityName: String = ""
+    lateinit var appCOntext: Application
+    lateinit var mWeatherRepository: WeatherRepository
+
+    @Inject
+    constructor(weatherRepository: WeatherRepository, application: Application) : this(application) {
+        this.appCOntext = application
+        this.mWeatherRepository = weatherRepository
+    }
+
+//    constructor(val weatherRepository: WeatherRepository, application: Application){}
+
+    var cityName: String? = ""
 
     var apiServiceInterface: ApiServiceInterface
 
     var mutableWeatherList: MutableLiveData<List<WeatherDetails>> = MutableLiveData()
     var weatherDetailsList: ArrayList<WeatherDetails> = ArrayList()
 
-    var progressStatus: MutableLiveData<Boolean> = MutableLiveData()
-    var errorMessage: MutableLiveData<String> = MutableLiveData()
+    var progressStatus: MutableLiveData<Boolean>? = MutableLiveData()
+    var errorMessage: MutableLiveData<String>? = MutableLiveData()
 
 
     val adapter: WeatherAdapter by lazy {
@@ -46,49 +58,24 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
     }
 
 
-    fun getWeatherListForCity(cityName: String = ""): MutableLiveData<List<WeatherDetails>> {
-
+    fun fetchCityWeatherListFromServer(
+        context: Context?,
+        cityName: String = "London"
+    ): MutableLiveData<List<WeatherDetails>> {
+        checkNetworkAndProcessd(context)
         setProgress(true)
-
-        val call = apiServiceInterface.getWeatherDetails(cityName, "7726cc18a2f0b0e79676dc02fdf5fa69")
-        call.enqueue(object : Callback<WeatherResponse> {
-            override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
-                if (response.code() == 200) {
-
-                    errorMessage.value = ""
-
-                    Log.i("Response", response.toString())
-
-                    response?.let {
-                        it.body()?.let {
-                            it?.let {
-                                with(it) {
-                                    this?.let {
-                                        setProgress(false)
-                                        android.util.Log.i("TAG", it?.toString())
-
-                                        if (it.list.size > 0) {
-                                            weatherDetailsList.addAll(it.list)
-                                            mutableWeatherList.value = weatherDetailsList
-                                            adapter.updateWeatherListItems(it.list)
-                                        } else {
-                                            setError("No Data Found")
-                                        }
-                                    }
-                                }
-                            }
-                        }
+        mWeatherRepository.getWeatherListForCity(cityName, object : ResponseCallBack<WeatherResponse> {
+            override fun onSuccess(value: WeatherResponse) {
+                when (value) {
+                    is WeatherResponse -> {
+                        var weatherResponse = value as? WeatherResponse
+                        handleWeatherResponse(weatherResponse)
                     }
-                } else {
-                    setProgress(false)
-                    setError("No Data Found")
                 }
             }
 
-            override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {
-                Log.i("ERROR", call.toString())
-                setError("Server Error")
-                setProgress(false)
+            override fun onError(error: String) {
+                setError(error)
             }
         })
         return mutableWeatherList
@@ -112,28 +99,6 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
         val TAG = "TopMovieViewModel"
     }
 
-    fun checkNetworkAndgetWeatherDetails(context: Context?, cityName: String = "") {
-        if (!CommonUtils.isNetworkAvailable(context as AppCompatActivity)) {
-            errorMessage.value = context.getString(R.string.no_internet)
-
-            if (context is MainActivity) {
-                (context as MainActivity).showError(errorMessage.value.toString())
-            }
-        } else {
-            getWeatherListForCity(cityName)
-        }
-        // getWeatherListForCity(cityName)
-    }
-
-    fun showOrHideError(): Boolean {
-        var isError = false
-        errorMessage.value?.let {
-            if (!it.isEmpty()) {
-                isError = false
-            }
-        }
-        return isError
-    }
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
 
@@ -164,19 +129,71 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
         this.cityName = name
     }
 
-    fun getProgressStatus(): LiveData<Boolean> {
+    fun getProgressStatus(): LiveData<Boolean>? {
         return progressStatus
     }
 
     fun setProgress(progress: Boolean) {
-        progressStatus.value = progress
+        progressStatus?.value = progress
     }
 
-    fun getErrorStatus(): LiveData<String> {
+    fun getErrorStatus(): LiveData<String>? {
         return errorMessage
     }
 
     fun setError(errMsg: String) {
-        errorMessage.value = errMsg
+        errorMessage?.value = errMsg
+    }
+
+    fun searchCityWeather(context: Context, cityName: String) {
+        if (isCityNameValid(cityName)) {
+            errorMessage?.value = context.getString(R.string.err_invalid_city_name)
+        } else {
+            fetchCityWeatherListFromServer(context, cityName)
+        }
+    }
+
+    fun isCityNameValid(city: String): Boolean {
+        return if (city.isEmpty() || (city.isNotEmpty() && city.length < 2)) false else true
+    }
+
+    fun checkNetworkAndProcessd(context: Context?): Boolean {
+        var proceed = true
+        if (!CommonUtils.isNetworkAvailable(context as AppCompatActivity)) {
+            setError(context.getString(R.string.err_nointernet))
+            proceed = false
+        }
+        return proceed
+    }
+
+    fun nullifyParameters() {
+        cityName = null
+        progressStatus = null
+        errorMessage = null
+    }
+
+    fun handleWeatherResponse(response: WeatherResponse?) {
+
+        setError("")
+        Log.i("Response", response.toString())
+
+        response?.let {
+            with(it) {
+                this.let {
+
+                    setProgress(false)
+
+                    Log.i("TAG", it.toString())
+
+                    if (it.list.isNotEmpty()) {
+                        weatherDetailsList.addAll(it.list)
+                        mutableWeatherList.value = weatherDetailsList
+                        adapter.updateWeatherListItems(it.list)
+                    } else {
+                        setError("No Data Found")
+                    }
+                }
+            }
+        }
     }
 }

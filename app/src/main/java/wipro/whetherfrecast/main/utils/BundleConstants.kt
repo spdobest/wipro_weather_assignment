@@ -1,4 +1,7 @@
 package wipro.whetherfrecast.main.utils
 
-interface BundleConstants {
-}
+
+/**
+ * DEFINE ALL THE BUNDLE KEY HERE
+ */
+interface BundleConstants

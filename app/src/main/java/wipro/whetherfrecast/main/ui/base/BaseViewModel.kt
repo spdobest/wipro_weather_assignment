@@ -3,6 +3,7 @@ package wipro.whetherfrecast.main.ui.base
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
 import wipro.whetherfrecast.main.network.ResponseCallBack
+import wipro.whetherfrecast.main.ui.navigator.BaseNavigator
 import java.lang.ref.WeakReference
 
 
@@ -19,10 +20,6 @@ open class BaseViewModel<N : BaseNavigator> : AndroidViewModel, ResponseCallBack
 
     fun setNavigator(navigator: N) {
         this.mBaseViewNavigator = WeakReference(navigator)
-    }
-
-    override fun onCleared() {
-        super.onCleared()
     }
 
     override fun onSuccess(value: Any) {

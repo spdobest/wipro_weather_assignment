@@ -17,8 +17,6 @@ import wipro.whetherfrecast.main.utils.WeatherDiffUtilsCallBack
 
 class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.Adapter<WeatherViewHolder>() {
 
-    lateinit var moviewViewModel: WeatherViewModel
-
     var data: MutableLiveData<ArrayList<WeatherDetails>> = MutableLiveData()
 
     init {
@@ -27,7 +25,7 @@ class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.
 
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         data.value?.let {
-            val weatherItemViewModel = WeatherItemViewModel(it.get(position))
+            val weatherItemViewModel = WeatherItemViewModel(it[position])
             holder.bind(weatherItemViewModel)
         }
     }
@@ -57,8 +55,8 @@ class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.
     fun updateWeatherListItems(newWeatherList: List<WeatherDetails>) {
         val diffCallback = WeatherDiffUtilsCallBack(this.listWeather, newWeatherList)
         val diffResult = DiffUtil.calculateDiff(diffCallback)
-        this.listWeather.clear()
-        this.listWeather.addAll(newWeatherList)
+        this.listWeather?.clear()
+        this.listWeather?.addAll(newWeatherList)
         diffResult.dispatchUpdatesTo(this)
     }
 }

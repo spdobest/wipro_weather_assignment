@@ -1,6 +1,6 @@
 package wipro.whetherfrecast.main.network
 
-public interface ResponseCallBack<S> {
-    abstract fun onSuccess(value: S)
-    abstract fun onError(error: String)
+interface ResponseCallBack<S> {
+    fun onSuccess(value: S)
+    fun onError(error: String)
 }

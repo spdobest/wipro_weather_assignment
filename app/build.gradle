@@ -18,11 +18,20 @@ android {
         versionCode 1
         versionName "1.0"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
+        setProperty("archivesBaseName", "COMU-$versionName")
     }
     buildTypes {
         debug {
             buildConfigField "String", "SERVER_URL", '"http://api.openweathermap.org/data/2.5/"'
             buildConfigField "String", "BASE_IMAGE_URL", '"http://openweathermap.org/img/w/"'
+            signingConfig getSigningConfig()
+
+            applicationVariants.all { variant ->
+                variant.outputs.all {
+                    outputFileName = "WeatherApp.apk"
+                  //  outputFileName = "${applicationName}_${variant.buildType.name}_${defaultConfig.versionName}.apk"
+                }
+            }
         }
         release {
             buildConfigField "String", "SERVER_URL", '"http://api.openweathermap.org/data/2.5/"'
@@ -30,6 +39,9 @@ android {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android-optimize.txt'), 'proguard-rules.pro'
         }
+    }
+    testOptions {
+        unitTests.returnDefaultValues = true
     }
 }
 
@@ -47,6 +59,13 @@ dependencies {
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-intents:3.0.2'
+    androidTestImplementation 'com.android.support.test.espresso:espresso-contrib:2.2.2', {
+        exclude group: 'com.android.support', module: 'support-annotations'
+        exclude group: 'com.android.support', module: 'support-v4'
+        exclude group: 'com.android.support', module: 'design'
+        exclude group: 'com.android.support', module: 'recyclerview-v7'
+    }
     testImplementation 'androidx.test:core:1.2.0'
     testImplementation 'org.mockito:mockito-core:2.23.4'
     androidTestImplementation 'androidx.test:rules:1.2.0'
@@ -81,4 +100,6 @@ dependencies {
     annotationProcessor "android.arch.lifecycle:compiler:1.1.1"
     //picaso
     implementation 'com.squareup.picasso:picasso:2.71828'
+    //swipe refresh layout
+    implementation 'androidx.swiperefreshlayout:swiperefreshlayout:1.0.0'
 }

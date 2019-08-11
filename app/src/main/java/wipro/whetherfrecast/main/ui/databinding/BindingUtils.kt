@@ -21,7 +21,7 @@ fun <T> setDataChanged(recyclerView: RecyclerView, positions: Set<Int>) {
 
     @BindingAdapter("app:adapter")
     fun bind(recyclerView: RecyclerView, adapter: WeatherAdapter, data: ArrayList<WeatherDetails>) {
-        recyclerView.setAdapter(adapter)
+        recyclerView.adapter = adapter
         adapter.updateData(data)
     }
 }
