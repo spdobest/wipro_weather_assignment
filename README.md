@@ -21,11 +21,9 @@ https://github.com/spdobest/wipro_weather_assignment/blob/master/apkFile/Weather
   5. Viewmodel  
   6. Observable  
  
-  
- ## SCREENSHOTS Of This Application  
- 
- ### Five days Weather Forecast for City  
-![alt tag](https://github.com/spdobest/wipro_weather_assignment/blob/master/screenshots/waether_list.png | width=100)  
- ### Details of weather for a CLicked Item
-![alt tag](https://github.com/spdobest/wipro_weather_assignment/blob/master/screenshots/weather_details.png | width=100)  
+ ### Five days Weather Forecast for City  (Weather Details and details Screenshot)  
+ 1. List of Weather for A city  
+ 2. On click on any weather , it will redirect to another Screen  
+   
+![alt tag](https://github.com/spdobest/wipro_weather_assignment/blob/master/screenshots/ss.jpg)   
 
