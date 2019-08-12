@@ -7,7 +7,6 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.ProgressBar
 import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.Nullable
@@ -16,9 +15,9 @@ import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_base.*
-import kotlinx.android.synthetic.main.fragment_weather.*
 import wipro.whetherfrecast.main.R
 import wipro.whetherfrecast.main.listeners.ToolbarListener
+import wipro.whetherfrecast.main.ui.fragments.BaseNavigator
 
 abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator>> : Fragment() {
 
@@ -28,10 +27,6 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
     var mLayoutId: Int = 0
     var mToolbarListener: ToolbarListener? = null
 
-
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-    }
 
     override fun onAttach(context: Context) {
         super.onAttach(context)
@@ -79,10 +74,6 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
         return view
     }
 
-    override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        super.onViewCreated(view, savedInstanceState)
-    }
-
 
     protected fun setLayout(layoutId: Int) {
         mLayoutId = layoutId
@@ -91,10 +82,6 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
     override fun onDetach() {
         super.onDetach()
         mToolbarListener = null
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
     }
 
     abstract fun initialize()

@@ -6,11 +6,24 @@ import androidx.appcompat.app.AppCompatActivity
 import java.text.ParseException
 import java.text.SimpleDateFormat
 import java.util.*
+import kotlin.math.round
 
+
+/**
+ * class where all the common methods are written here
+ * where You will get commonly used methods in the application
+ */
 class CommonUtils {
 
     companion object {
-        fun getDateInddMMMYYYYFormat(weatherDate: String = ""): String {
+        /**
+         * Params : date: String in yyyy-MM-dd HH:mm:ss
+         * It convert date to dd MM YYYY format
+         * 2013-02-27 21:06:30 - 27 Feb 2013
+         *
+         * Default Date parameter is 2019-08-15 21:06:30
+         */
+        fun getDateInddMMMYYYYFormat(weatherDate: String = "2019-08-15 21:06:30"): String {
 
             var formattedDate = ""
 
@@ -19,10 +32,8 @@ class CommonUtils {
 
             val date: Date
             try {
-                date = originalFormat.parse("2013-02-27 21:06:30")
+                date = originalFormat.parse(weatherDate)
                 formattedDate = targetFormat.format(date)
-                System.out.println("Old Format :   " + originalFormat.format(date))
-                System.out.println("New Format :   " + targetFormat.format(date))
 
             } catch (ex: Exception) {
                 ex.stackTrace
@@ -30,7 +41,14 @@ class CommonUtils {
             return formattedDate
         }
 
-        fun getDateInddHHmmFormat(weatherDate: String = ""): String {
+        /**
+         * Params : date: String in yyyy-MM-dd HH:mm:ss
+         * It convert date to dd hh:mm aa format
+         * 2013-02-27 21:06:30 - 9:06 PM
+         *
+         * Default Date parameter is 2019-08-15 21:06:30
+         */
+        fun getDateInddHHmmFormat(weatherDate: String = "2019-08-15 21:06:30"): String {
 
             var formattedTime = ""
 
@@ -39,9 +57,7 @@ class CommonUtils {
 
             val date: Date
             try {
-                date = originalFormat.parse("2013-02-27 21:06:30")
-                System.out.println("Old Format :   " + originalFormat.format(date))
-                System.out.println("New Format :   " + targetFormat.format(date))
+                date = originalFormat.parse(weatherDate)
                 formattedTime = targetFormat.format(date)
             } catch (ex: ParseException) {
                 ex.stackTrace
@@ -49,7 +65,14 @@ class CommonUtils {
             return formattedTime
         }
 
-        fun getDayOftheWeek(weatherDate: String = ""): String {
+        /**
+         * Params : date: String in yyyy-MM-dd HH:mm:ss
+         * It convert date to EEEE format
+         * 2013-02-27 21:06:30 - MONDAY
+         *
+         * Default Date parameter is 2019-08-15 21:06:30
+         */
+        fun getDayOftheWeek(weatherDate: String = "2019-08-15 21:06:30"): String {
 
             var formattedDay = ""
 
@@ -58,19 +81,26 @@ class CommonUtils {
 
             val date: Date
             try {
-                date = originalFormat.parse("2013-02-27 21:06:30")
-                System.out.println("Old Format :   " + originalFormat.format(date))
-                System.out.println("New Format :   " + targetFormat.format(date))
+                date = originalFormat.parse(weatherDate)
                 formattedDay = targetFormat.format(date)
             } catch (ex: ParseException) {
                 ex.stackTrace
             }
             return formattedDay
         }
+
+        /**
+         * Check internet connection
+         */
         fun isNetworkAvailable(activity: AppCompatActivity):Boolean{
             val connectivityManager=activity.getSystemService(Context.CONNECTIVITY_SERVICE) as ConnectivityManager
             val networkInfo=connectivityManager.activeNetworkInfo
             return  networkInfo!=null && networkInfo.isConnected
+        }
+
+        fun getCelciousFromKalvin(tempInKalvin: Double): String {
+            val tempInCelcious: Double = round((tempInKalvin - 273.15) * 100) / 100
+            return tempInCelcious.toString() + 0x00B0.toChar() + " C "
         }
     }
 }

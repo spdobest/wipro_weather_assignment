@@ -11,13 +11,10 @@ import wipro.whetherfrecast.main.databinding.ItemviewWeatherBinding
 import wipro.whetherfrecast.main.ui.adapter.viewholders.WeatherViewHolder
 import wipro.whetherfrecast.main.ui.model.WeatherDetails
 import wipro.whetherfrecast.main.ui.viewmodel.WeatherItemViewModel
-import wipro.whetherfrecast.main.ui.viewmodel.WeatherViewModel
 import wipro.whetherfrecast.main.utils.WeatherDiffUtilsCallBack
 
 
 class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.Adapter<WeatherViewHolder>() {
-
-    lateinit var moviewViewModel: WeatherViewModel
 
     var data: MutableLiveData<ArrayList<WeatherDetails>> = MutableLiveData()
 
@@ -27,7 +24,7 @@ class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.
 
     override fun onBindViewHolder(holder: WeatherViewHolder, position: Int) {
         data.value?.let {
-            val weatherItemViewModel = WeatherItemViewModel(it.get(position))
+            val weatherItemViewModel = WeatherItemViewModel(it[position])
             holder.bind(weatherItemViewModel)
         }
     }

@@ -5,8 +5,8 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         tools:context=".ui.activity.MainActivity"
-android:id="@+id/constraintLayoutParent"
->
+        android:id="@+id/constraintLayoutParent">
+
 
     <androidx.appcompat.widget.Toolbar android:layout_width="match_parent"
                                        android:layout_height="wrap_content"
@@ -15,9 +15,7 @@ android:id="@+id/constraintLayoutParent"
                                        app:layout_constraintTop_toTopOf="parent"
                                        app:layout_constraintStart_toStartOf="parent"
                                        android:id="@+id/toolbar"
-                                       app:titleTextColor="@android:color/white"
-
-    />
+                                       app:titleTextColor="@android:color/white"/>
 
     <FrameLayout
             android:id="@+id/fragmentContainer"

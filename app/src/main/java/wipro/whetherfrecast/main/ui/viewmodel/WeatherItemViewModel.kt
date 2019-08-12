@@ -4,6 +4,7 @@ package wipro.whetherfrecast.main.ui.viewmodel
 import androidx.lifecycle.ViewModel
 import wipro.whetherfrecast.main.ui.model.*
 import wipro.whetherfrecast.main.utils.CommonUtils
+import kotlin.math.round
 
 class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
@@ -11,20 +12,22 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
     lateinit var weather: Weather
     lateinit var wind: Wind
     lateinit var rain: Rain
+    lateinit var cloud: Clouds
     lateinit var dateTime: String
 
     companion object {
-        val TAG = "TopMovieViewModel"
+        const val TAG = "TopMovieViewModel"
     }
 
     init {
-        weatherDetails?.let {
+        weatherDetails.let {
             main = it.main
             wind = it.wind
             rain = it.rain
+            cloud = it.clouds
             dateTime = it.dt_txt
 
-            it.weather?.let {
+            it.weather.let {
                 if (it.size > 0) {
                     weather = weatherDetails.weather.get(0)
                 }
@@ -34,7 +37,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWearherDate(): String {
         var date = "--"
-        dateTime?.let {
+        dateTime.let {
             date = CommonUtils.getDateInddMMMYYYYFormat(it)
         }
         return date
@@ -42,7 +45,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWeatherTime(): String {
         var time = "--"
-        dateTime?.let {
+        dateTime.let {
             time = CommonUtils.getDateInddHHmmFormat(it)
         }
         return time
@@ -50,7 +53,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWearherDay(): String {
         var day = ""
-        dateTime?.let {
+        dateTime.let {
             day = CommonUtils.getDayOftheWeek(it)
         }
         return day
@@ -58,7 +61,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWearherIcon(): String {
         var icon = "--"
-        weather?.let {
+        weather.let {
             icon = it.icon
         }
         return icon
@@ -66,7 +69,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWeatherTitle(): String {
         var title = "--"
-        weather?.let {
+        weather.let {
             title = it.main
         }
         return title
@@ -74,7 +77,7 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getTemperture(): String {
         var tempeture = ""
-        main?.let {
+        main.let {
             tempeture =
                 "MAX " + it.temp_min.toString() + 0x00B0.toChar() + " - MIN " + it.temp_min.toString() + 0x00B0.toChar()
         }
@@ -83,40 +86,44 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     fun getWindDetails(): String {
         var windDetails = "--"
-        wind?.let {
+        wind.let {
             windDetails =
-                "SPEED " + it.speed.toString() + "\n DEGREE " + it.deg.toString() + 0x00B0.toChar()
+                "Speed " + it.speed.toString() + " m/sec" + "\n Direction " + round((it.deg * 100) / 100).toString() + 0x00B0.toChar()
         }
         return windDetails
     }
 
+    fun getCloudyness(): String {
+        var cloudyNess = "--"
+        cloud.let {
+            cloudyNess = "Cloudiness \n${it.all}%"
+        }
+        return cloudyNess
+    }
+
     fun getWeatherDetailsMessage(): String {
         var weatherDescription = "--"
-        weather?.let {
+        weather.let {
             weatherDescription = it.main + " : "
         }
 
-        main?.let {
+        main.let {
             weatherDescription =
-                weatherDescription + "High " + it.temp_min.toString() + 0x00B0.toChar() + " - Low " + it.temp_min.toString() + 0x00B0.toChar()
+                weatherDescription + "High " + CommonUtils.getCelciousFromKalvin(it.temp_max) + " - Low " + CommonUtils.getCelciousFromKalvin(
+                    it.temp_min
+                )
         }
 
-        wind?.let {
+        wind.let {
             weatherDescription =
                 weatherDescription + " Winds W at " + it.speed.toString() + "\n at " + it.deg.toString() + 0x00B0.toChar()
         }
 
-        main?.let {
+        main.let {
             weatherDescription =
-                weatherDescription + " With Humidity " + it.humidity
-        }
+                weatherDescription + " With Humidity " + it.humidity + " Pressure " + it.pressure + "hpa"
 
+        }
         return weatherDescription
-    }
-
-    fun getWeatherColor(): String {
-        weather?.let {
-            return it.main
-        }
     }
 }
