@@ -11,7 +11,6 @@ import androidx.databinding.Observable
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import wipro.whetherfrecast.main.R
-import wipro.whetherfrecast.main.network.ApiServiceInterface
 import wipro.whetherfrecast.main.network.ResponseCallBack
 import wipro.whetherfrecast.main.ui.adapter.WeatherAdapter
 import wipro.whetherfrecast.main.ui.base.BaseViewModel
@@ -38,12 +37,8 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
         WeatherAdapter(weatherDetailsList)
     }
 
-    val apiServiceInterface: ApiServiceInterface by lazy {
-        ApiServiceInterface.create()
-    }
-
     val mWeatherRepository: WeatherRepository by lazy {
-        WeatherRepository(apiServiceInterface)
+        WeatherRepository()
     }
 
 

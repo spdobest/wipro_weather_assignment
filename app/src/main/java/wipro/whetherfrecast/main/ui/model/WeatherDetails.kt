@@ -1,5 +1,9 @@
 package wipro.whetherfrecast.main.ui.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class WeatherDetails(
     val clouds: Clouds,
     val dt: Int,
@@ -9,4 +13,4 @@ data class WeatherDetails(
     val sys: Sys,
     val weather: List<Weather>,
     val wind: Wind
-)
+) : Parcelable

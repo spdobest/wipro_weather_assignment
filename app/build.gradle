@@ -10,6 +10,9 @@ android {
     dataBinding {
         enabled = true
     }
+    androidExtensions {
+        experimental = true
+    }
     compileSdkVersion 28
     defaultConfig {
         applicationId "wipro.whetherfrecast.main"
@@ -20,6 +23,7 @@ android {
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         setProperty("archivesBaseName", "COMU-$versionName")
         multiDexEnabled true
+
     }
     buildTypes {
         debug {
@@ -56,6 +60,7 @@ dependencies {
     implementation 'androidx.cardview:cardview:1.0.0'
     implementation 'com.google.android.material:material:1.1.0-alpha09'
 
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
     testImplementation 'junit:junit:4.12'
     androidTestImplementation 'androidx.test:runner:1.2.0'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
@@ -71,13 +76,6 @@ dependencies {
     testImplementation 'org.mockito:mockito-core:2.24.5'
     // required if you want to use Mockito for Android tests
     androidTestImplementation 'org.mockito:mockito-android:2.24.5'
-
-    /************** DAGGER2 ***************/
-    // https://guides.codepath.com/android/dependency-injection-with-dagger-2
-    implementation 'com.google.dagger:dagger-android:2.22'
-    implementation 'com.google.dagger:dagger-android-support:2.22' // if you use the support libraries
-    kapt 'com.google.dagger:dagger-android-processor:2.21'
-    kapt 'com.google.dagger:dagger-compiler:2.21'
 
     /**************** RETROFIT 2**************/
     implementation "com.squareup.retrofit2:retrofit:2.5.0"

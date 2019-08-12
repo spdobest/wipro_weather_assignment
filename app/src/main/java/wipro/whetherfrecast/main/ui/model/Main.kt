@@ -1,5 +1,9 @@
 package wipro.whetherfrecast.main.ui.model
 
+import android.os.Parcelable
+import kotlinx.android.parcel.Parcelize
+
+@Parcelize
 data class Main(
     val grnd_level: Double,
     val humidity: Int,
@@ -9,4 +13,4 @@ data class Main(
     /*val temp_kf: Int,*/
     val temp_max: Double,
     val temp_min: Double
-)
+) : Parcelable

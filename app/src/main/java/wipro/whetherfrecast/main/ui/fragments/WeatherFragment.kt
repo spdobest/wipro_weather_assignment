@@ -14,6 +14,7 @@ import com.google.android.material.snackbar.Snackbar
 import kotlinx.android.synthetic.main.fragment_weather.*
 import wipro.whetherfrecast.main.R
 import wipro.whetherfrecast.main.databinding.FragmentWeatherBinding
+import wipro.whetherfrecast.main.listeners.WeatherClickListener
 import wipro.whetherfrecast.main.ui.activity.MainActivity
 import wipro.whetherfrecast.main.ui.adapter.WeatherAdapter
 import wipro.whetherfrecast.main.ui.base.BaseFragment
@@ -24,7 +25,7 @@ import wipro.whetherfrecast.main.ui.viewmodel.WeatherViewModel
  * Fragment TO show 5 days weather for a particular city
  */
 class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>(),
-    BaseNavigator, LifecycleOwner {
+    BaseNavigator, LifecycleOwner, WeatherClickListener {
 
     var weatherList: ArrayList<WeatherDetails> = ArrayList()
 
@@ -114,8 +115,8 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
      */
     override fun initialize() {
         searchedCityName = autocompleteTextViewWeather.text.toString()
+        (activity as MainActivity).showError("London Weather Forecat")
         getViewModel().setNavigator(this)
-
         autocompleteTextViewWeather.setOnItemClickListener { adapterView, view, i, l ->
             searchedCityName = autocompleteTextViewWeather.text.toString()
             (activity as MainActivity).setToolbarTitle(searchedCityName)
@@ -161,6 +162,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
      * SETup weather recyclerview Adapter
      */
     fun setAdapter() {
+        weatherAdapter.setWeatherClcik(this)
         recyclerView.adapter = weatherAdapter
         val countries = resources.getStringArray(R.array.india_top_cities)
         val adapter = ArrayAdapter(activity, android.R.layout.simple_list_item_1, countries)
@@ -191,4 +193,15 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
         getViewModel().nullifyParameters()
     }
 
+    override fun onWeatherClick(weatherDetails: WeatherDetails) {
+        showWeatherDetailsFragment(weatherDetails)
+    }
+
+    fun showWeatherDetailsFragment(weatherDetails: WeatherDetails) {
+        activity?.supportFragmentManager?.let {
+            WeatherDetailsDialogFragment.newInstance(weatherDetails, searchedCityName).show(
+                it, "TAG"
+            )
+        }
+    }
 }

@@ -8,6 +8,7 @@ import androidx.lifecycle.MutableLiveData
 import androidx.recyclerview.widget.DiffUtil
 import androidx.recyclerview.widget.RecyclerView
 import wipro.whetherfrecast.main.databinding.ItemviewWeatherBinding
+import wipro.whetherfrecast.main.listeners.WeatherClickListener
 import wipro.whetherfrecast.main.ui.adapter.viewholders.WeatherViewHolder
 import wipro.whetherfrecast.main.ui.model.WeatherDetails
 import wipro.whetherfrecast.main.ui.viewmodel.WeatherItemViewModel
@@ -15,6 +16,9 @@ import wipro.whetherfrecast.main.utils.WeatherDiffUtilsCallBack
 
 
 class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.Adapter<WeatherViewHolder>() {
+
+
+    lateinit var mWeatherClickListener: WeatherClickListener
 
     var data: MutableLiveData<ArrayList<WeatherDetails>> = MutableLiveData()
 
@@ -26,6 +30,10 @@ class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.
         data.value?.let {
             val weatherItemViewModel = WeatherItemViewModel(it[position])
             holder.bind(weatherItemViewModel)
+
+            holder.itemView.setOnClickListener {
+                mWeatherClickListener.onWeatherClick(listWeather.get(position))
+            }
         }
     }
 
@@ -58,4 +66,9 @@ class WeatherAdapter(var listWeather: ArrayList<WeatherDetails>) : RecyclerView.
         this.listWeather.addAll(newWeatherList)
         diffResult.dispatchUpdatesTo(this)
     }
+
+    fun setWeatherClcik(weatherClickListener: WeatherClickListener) {
+        this.mWeatherClickListener = weatherClickListener
+    }
+
 }

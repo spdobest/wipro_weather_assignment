@@ -12,14 +12,14 @@ import wipro.whetherfrecast.main.utils.UrlConstants
 /**
  * Model to make the api call
  */
-class WeatherRepository(var apiServiceInterface: ApiServiceInterface) {
+class WeatherRepository {
 
     fun getWeatherListForCity(cityName: String, callback: ResponseCallBack<WeatherResponse>) {
 
         /**
          * NOW GET THE DETAILS FROM API
          */
-        val call = apiServiceInterface.getWeatherDetails(cityName, UrlConstants.APP_KEY)
+        val call = ApiServiceInterface.create().getWeatherDetails(cityName, UrlConstants.APP_KEY)
         call.enqueue(object : Callback<WeatherResponse> {
             override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
                 response.body()?.let {

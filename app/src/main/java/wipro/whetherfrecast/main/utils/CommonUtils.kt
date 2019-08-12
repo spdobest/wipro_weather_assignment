@@ -100,7 +100,7 @@ class CommonUtils {
 
         fun getCelciousFromKalvin(tempInKalvin: Double): String {
             val tempInCelcious: Double = round((tempInKalvin - 273.15) * 100) / 100
-            return tempInCelcious.toString() + 0x00B0.toChar() + " C "
+            return tempInCelcious.toString() + 0x00B0.toChar() + " C"
         }
     }
 }

@@ -31,7 +31,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     app:layout_constraintStart_toStartOf="parent"
-                    android:layout_marginStart="24dp"
+                    android:layout_marginStart="@dimen/dimen_15dp"
                     android:layout_marginTop="12dp"
                     tools:text="Title"
                     android:fontFamily="@font/roboto_black"
@@ -41,11 +41,28 @@
 
 
             <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/textRainDesc"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="(Rain Desc)"
+                    android:fontFamily="@font/roboto_regular"
+                    android:textSize="@dimen/dimen_10sp"
+                    android:layout_marginTop="@dimen/dimen_3dp"
+                    app:layout_constraintTop_toBottomOf="@+id/imgDate"
+                    app:layout_constraintStart_toEndOf="@+id/textViewWeatherType"
+                    app:layout_constraintBottom_toBottomOf="@+id/textViewWeatherType"
+                    app:layout_constraintTop_toTopOf="@+id/textViewWeatherType"
+                    android:text="@{weatherItemViewModel.getWeatherDescription}"
+                    app:layout_constraintBottom_toTopOf="@+id/imgWeatherType"
+                    app:layout_constraintVertical_bias="0.0"/>
+
+
+            <androidx.appcompat.widget.AppCompatTextView
                     android:id="@+id/textViewDay"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:fontFamily="@font/roboto_bold"
-                    android:layout_marginTop="8dp"
+                    android:layout_marginTop="@dimen/dimen_8dp"
                     app:layout_constraintTop_toTopOf="parent"
                     app:layout_constraintStart_toStartOf="parent"
                     android:layout_marginStart="@dimen/dimen_10dp"
@@ -77,6 +94,20 @@
                     android:layout_marginStart="8dp"
                     android:text="@{weatherItemViewModel.getWearherDate}"
             />
+
+            <androidx.appcompat.widget.AppCompatTextView
+                    android:id="@+id/tvWeatherTempNormal"
+                    android:layout_width="wrap_content"
+                    android:layout_height="wrap_content"
+                    tools:text="25"
+                    android:fontFamily="@font/roboto_black"
+                    android:textSize="@dimen/dimen_14sp"
+                    app:layout_constraintTop_toBottomOf="parent"
+                    android:layout_marginTop="@dimen/dimen_8dp"
+                    app:layout_constraintTop_toTopOf="parent"
+                    android:text="@{weatherItemViewModel.normalTemperature}"
+                    app:layout_constraintEnd_toStartOf="@+id/imgClock"
+                    app:layout_constraintStart_toEndOf="@+id/textViewDay" android:layout_marginStart="8dp"/>
 
             <androidx.appcompat.widget.AppCompatImageView
                     android:id="@+id/imgClock"
@@ -146,7 +177,7 @@
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     tools:text="25"
-                    android:fontFamily="@font/roboto_black"
+                    android:fontFamily="@font/roboto_light"
                     android:textSize="@dimen/dimen_14sp"
                     app:layout_constraintTop_toBottomOf="@+id/viewLine"
                     android:layout_marginTop="@dimen/dimen_15dp"
@@ -187,7 +218,7 @@
                                                          app:layout_constraintEnd_toEndOf="parent"
                                                          app:layout_constraintStart_toStartOf="parent"
                                                          app:layout_constraintTop_toBottomOf="@+id/imgWeatherType"
-                                                         android:background="@drawable/rounded_background"
+                                                         android:background="@drawable/bottom_rounded_background"
                                                          android:layout_marginTop="@dimen/dimen_10dp"
                                                          android:textColor="@android:color/white"
                                                          app:fontFamily="@font/roboto_light"

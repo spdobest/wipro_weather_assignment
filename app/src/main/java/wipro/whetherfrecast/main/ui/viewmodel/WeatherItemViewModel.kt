@@ -6,7 +6,7 @@ import wipro.whetherfrecast.main.ui.model.*
 import wipro.whetherfrecast.main.utils.CommonUtils
 import kotlin.math.round
 
-class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
+open class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
 
     lateinit var main: Main
     lateinit var weather: Weather
@@ -26,7 +26,6 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
             rain = it.rain
             cloud = it.clouds
             dateTime = it.dt_txt
-
             it.weather.let {
                 if (it.size > 0) {
                     weather = weatherDetails.weather.get(0)
@@ -70,7 +69,15 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
     fun getWeatherTitle(): String {
         var title = "--"
         weather.let {
-            title = it.main
+            title = "${it.main}"
+        }
+        return title
+    }
+
+    fun getWeatherDescription(): String {
+        var title = "--"
+        weather.let {
+            title = "(${it.description})"
         }
         return title
     }
@@ -79,7 +86,18 @@ class WeatherItemViewModel(weatherDetails: WeatherDetails) : ViewModel() {
         var tempeture = ""
         main.let {
             tempeture =
-                "MAX " + it.temp_min.toString() + 0x00B0.toChar() + " - MIN " + it.temp_min.toString() + 0x00B0.toChar()
+                "MAX " + CommonUtils.getCelciousFromKalvin(it.temp_max) + " - MIN " + CommonUtils.getCelciousFromKalvin(
+                    it.temp_min
+                )
+        }
+        return tempeture
+    }
+
+    fun normalTemperature(): String {
+        var tempeture = ""
+        main.let {
+            tempeture =
+                "Temp " + CommonUtils.getCelciousFromKalvin(it.temp)
         }
         return tempeture
     }
