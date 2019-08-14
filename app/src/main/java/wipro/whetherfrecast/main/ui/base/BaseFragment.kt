@@ -7,19 +7,18 @@ import android.os.Bundle
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.TextView
 import androidx.annotation.LayoutRes
 import androidx.annotation.Nullable
-import androidx.appcompat.widget.AppCompatTextView
 import androidx.databinding.DataBindingUtil
 import androidx.databinding.ViewDataBinding
 import androidx.fragment.app.Fragment
 import kotlinx.android.synthetic.main.fragment_base.*
+import kotlinx.android.synthetic.main.include_error.*
+import kotlinx.android.synthetic.main.include_progress.*
 import wipro.whetherfrecast.main.R
 import wipro.whetherfrecast.main.listeners.ToolbarListener
-import wipro.whetherfrecast.main.ui.fragments.BaseNavigator
 
-abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator>> : Fragment() {
+abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel> : Fragment() {
 
     var mViewDataBinding: T? = null
     var mViewModel: V? = null
@@ -37,33 +36,26 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
         }
     }
 
-    protected fun setBaseEmptyView(view: AppCompatTextView) {
-        view.visibility = View.VISIBLE
-        view.setText(R.string.error_nodata)
+    protected fun setBaseEmptyView() {
+        textViewErrorTitle.text = getString(R.string.error_nodata)
     }
 
-    protected fun setBaseEmptyView(view: TextView, message: String) {
-        view.text = message
+    protected open fun showErrorBase(message: String) {
+        relativeLayoutError.visibility = View.VISIBLE
+        textViewErrorTitle.text = message
     }
 
-    fun hideBaseProgressBar() {
+    fun hideError() {
+        relativeLayoutError?.visibility = View.GONE
+    }
+
+    fun hideProgressBar() {
         progressbarLoading?.visibility = View.GONE
     }
 
-    fun showBaseErrorWithMessage(str: String) {
-        progressbarLoading.visibility = View.GONE
-        if (!str.isEmpty()) {
-            if (progressbarLoading != null) {
-                progressbarLoading.visibility = View.GONE
-                textViewErrorTitle_base.text = str
-            }
-        }
+    fun showProgressBar() {
+        progressbarLoading?.visibility = View.VISIBLE
     }
-
-    fun showBaseProgressBar() {
-       // progressbarLoading?.visibility = View.VISIBLE
-    }
-
 
     @Nullable
     override fun onCreateView(inflater: LayoutInflater, @Nullable container: ViewGroup?, @Nullable savedInstanceState: Bundle?): View? {
@@ -71,9 +63,8 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
         mViewDataBinding = DataBindingUtil.inflate(inflater, getLayoutId(), container, false)
 
         inflater.inflate(mLayoutId, fragment_container)
-        return view
+        return mViewDataBinding?.root
     }
-
 
     protected fun setLayout(layoutId: Int) {
         mLayoutId = layoutId
@@ -95,4 +86,12 @@ abstract class BaseFragment<T : ViewDataBinding, V : BaseViewModel<BaseNavigator
 
     @LayoutRes
     abstract fun getLayoutId(): Int
+
+    interface Callback {
+
+        fun onFragmentAttached()
+
+        fun onFragmentDetached(tag: String)
+    }
+
 }

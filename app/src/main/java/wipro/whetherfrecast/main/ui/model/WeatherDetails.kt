@@ -1,6 +1,7 @@
 package wipro.whetherfrecast.main.ui.model
 
 import android.os.Parcelable
+import androidx.databinding.BaseObservable
 import kotlinx.android.parcel.Parcelize
 
 @Parcelize
@@ -13,4 +14,4 @@ data class WeatherDetails(
     val sys: Sys,
     val weather: List<Weather>,
     val wind: Wind
-) : Parcelable
+) : Parcelable, BaseObservable()

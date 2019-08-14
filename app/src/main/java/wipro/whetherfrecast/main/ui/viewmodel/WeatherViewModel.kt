@@ -5,25 +5,42 @@ import android.content.Context
 import android.text.Editable
 import android.text.TextWatcher
 import android.util.Log
+import android.view.View
 import androidx.appcompat.app.AppCompatActivity
 import androidx.databinding.Bindable
 import androidx.databinding.Observable
+import androidx.databinding.PropertyChangeRegistry
 import androidx.lifecycle.LiveData
 import androidx.lifecycle.MutableLiveData
 import wipro.whetherfrecast.main.R
+import wipro.whetherfrecast.main.listeners.OnsearchClickListener
 import wipro.whetherfrecast.main.network.ResponseCallBack
 import wipro.whetherfrecast.main.ui.adapter.WeatherAdapter
 import wipro.whetherfrecast.main.ui.base.BaseViewModel
-import wipro.whetherfrecast.main.ui.fragments.BaseNavigator
 import wipro.whetherfrecast.main.ui.model.WeatherDetails
 import wipro.whetherfrecast.main.ui.model.WeatherResponse
 import wipro.whetherfrecast.main.ui.repository.WeatherRepository
 import wipro.whetherfrecast.main.utils.CommonUtils
 
+class WeatherViewModel constructor(application: Application) : BaseViewModel(application), Observable,
+    OnsearchClickListener {
 
-class WeatherViewModel constructor(application: Application) : BaseViewModel<BaseNavigator>(application), Observable{
+    override fun onSearchClick(view: View) {
+        Log.i(TAG, "onSearchClick")
+        fetchCityWeatherListFromServer(mContext, cityName?.value.toString())
+    }
 
-    var cityName: String? = ""
+    @Transient
+    private var mCallbacks: PropertyChangeRegistry? = null
+
+    var mContext: Context? = null
+
+    var cityName: MutableLiveData<String>? = MutableLiveData()
+    var isRefreshing: MutableLiveData<Boolean> = MutableLiveData()
+
+    init {
+        //  cityName?.value = "Siba"
+    }
 
 
     var mutableWeatherList: MutableLiveData<List<WeatherDetails>> = MutableLiveData()
@@ -50,6 +67,10 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
         context: Context?,
         cityName: String = "London"
     ): MutableLiveData<List<WeatherDetails>> {
+        isRefreshing.value = true
+        notifyPropertyChanged(R.id.swipeContainer)
+
+        this.mContext = context
         if (checkNetworkAndProcessd(context)) {
             setProgress(true)
             mWeatherRepository.getWeatherListForCity(cityName, object : ResponseCallBack<WeatherResponse> {
@@ -90,11 +111,49 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
 
 
     override fun removeOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
-
+        synchronized(this) {
+            if (callback == null) {
+                return
+            }
+        }
+        mCallbacks?.remove(callback)
     }
 
     override fun addOnPropertyChangedCallback(callback: Observable.OnPropertyChangedCallback?) {
+        synchronized(this) {
+            if (mCallbacks == null) {
+                mCallbacks = PropertyChangeRegistry()
+            }
+        }
+        mCallbacks?.add(callback)
+    }
 
+    /**
+     * THIS method is used to update the whole UI
+     */
+    fun notifyChange() {
+        synchronized(this) {
+            if (mCallbacks == null) {
+                return
+            }
+        }
+        mCallbacks?.notifyCallbacks(this, 0, null)
+    }
+
+    /**
+     * Notifies listeners that a specific property has changed. The getter for the property
+     * that changes should be marked with [Bindable] to generate a field in
+     * `BR` to be used as `fieldId`.
+     *
+     * @param fieldId The generated BR id for the Bindable field.
+     */
+    fun notifyPropertyChanged(fieldId: Int) {
+        synchronized(this) {
+            if (mCallbacks == null) {
+                return
+            }
+        }
+        mCallbacks?.notifyCallbacks(this, fieldId, null)
     }
 
     @Bindable
@@ -102,7 +161,9 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
         return object : TextWatcher {
             override fun beforeTextChanged(s: CharSequence, start: Int, count: Int, after: Int) {}
             override fun onTextChanged(s: CharSequence, start: Int, before: Int, count: Int) {
-                setCity(s.toString())
+                if (count > 3) {
+                    setCity(s.toString())
+                }
             }
 
             override fun afterTextChanged(s: Editable) {}
@@ -110,7 +171,8 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
     }
 
     fun setCity(name: String) {
-        this.cityName = name
+        this.cityName?.value = name
+        //fetchCityWeatherListFromServer(mContext, name)
     }
 
     fun getProgressStatus(): LiveData<Boolean>? {
@@ -127,6 +189,8 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
 
     fun setError(errMsg: String) {
         errorMessage?.value = errMsg
+        isRefreshing.value = false
+        notifyPropertyChanged(R.id.swipeContainer)
     }
 
     /**
@@ -134,7 +198,7 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
      */
     fun searchCityWeather(context: Context, cityName: String) {
         if (isCityNameValid(cityName)) {
-            setError(context.getString(R.string.err_invalid_city_name))
+            setError(context.getString(wipro.whetherfrecast.main.R.string.err_invalid_city_name))
         } else {
             fetchCityWeatherListFromServer(context, cityName)
         }
@@ -153,7 +217,7 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
     fun checkNetworkAndProcessd(context: Context?): Boolean {
         var proceed = true
         if (!CommonUtils.isNetworkAvailable(context as AppCompatActivity)) {
-            setError(context.getString(R.string.err_nointernet))
+            setError(context.getString(wipro.whetherfrecast.main.R.string.err_nointernet))
             proceed = false
         }
         return proceed
@@ -186,8 +250,12 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel<Bas
                     Log.i("TAG", it.toString())
 
                     if (it.list.isNotEmpty()) {
+                        // getName()
+                        cityName?.value = "Updated"
                         mutableWeatherList.value = it.list
                         adapter.updateWeatherListItems(it.list)
+                        isRefreshing.value = false
+                        notifyChange()
                     } else {
                         setError("No Data Found")
                     }

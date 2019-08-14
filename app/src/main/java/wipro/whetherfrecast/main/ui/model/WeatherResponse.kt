@@ -1,5 +1,7 @@
 package wipro.whetherfrecast.main.ui.model
 
+import androidx.databinding.BaseObservable
+
 
 data class WeatherResponse(
     val city: City,
@@ -7,7 +9,7 @@ data class WeatherResponse(
     val cod: String,
     val list: List<WeatherDetails>,
     val message: Double
-)
+) : BaseObservable()
 
 
 

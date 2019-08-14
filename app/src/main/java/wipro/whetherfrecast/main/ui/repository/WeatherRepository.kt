@@ -22,13 +22,19 @@ class WeatherRepository {
         val call = ApiServiceInterface.create().getWeatherDetails(cityName, UrlConstants.APP_KEY)
         call.enqueue(object : Callback<WeatherResponse> {
             override fun onResponse(call: Call<WeatherResponse>, response: Response<WeatherResponse>) {
-                response.body()?.let {
+                var res = response.body()?.let {
                     if (it.cod == "200") {
                         callback.onSuccess(it)
                     } else {
                         callback.onError("Server Error")
                     }
+                    1
                 }
+
+                if (res != 1) {
+                    callback.onError("Error")
+                }
+
             }
 
             override fun onFailure(call: Call<WeatherResponse>, t: Throwable) {

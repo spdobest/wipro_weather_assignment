@@ -1,11 +1,13 @@
 package wipro.whetherfrecast.main.ui.fragments
 
 import android.os.Bundle
+import android.os.Handler
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ArrayAdapter
 import androidx.core.content.ContextCompat
+import androidx.databinding.DataBindingUtil
 import androidx.fragment.app.FragmentActivity
 import androidx.lifecycle.LifecycleOwner
 import androidx.lifecycle.Observer
@@ -24,8 +26,7 @@ import wipro.whetherfrecast.main.ui.viewmodel.WeatherViewModel
 /**
  * Fragment TO show 5 days weather for a particular city
  */
-class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>(),
-    BaseNavigator, LifecycleOwner, WeatherClickListener {
+class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>(), LifecycleOwner, WeatherClickListener {
 
     var weatherList: ArrayList<WeatherDetails> = ArrayList()
 
@@ -43,21 +44,31 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
     }
 
 
-    override fun setClickListener() {
-
-    }
+    override fun setClickListener() {}
 
     override fun onCreateView(
         inflater: LayoutInflater, container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-        val rootView = inflater.inflate(R.layout.fragment_weather, container, false)
-        setLayout(R.layout.fragment_weather)
-        return rootView
+
+        var binding: FragmentWeatherBinding =
+            DataBindingUtil.inflate(
+                inflater,
+                R.layout.fragment_weather,
+                container,
+                false
+            )
+
+        val view = binding.root
+        binding.weatherViewmodel = getViewModel()
+        binding.lifecycleOwner = this
+
+        return view
     }
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
+
         initialize()
         setAdapter()
         setupSwipeRefresh()
@@ -75,26 +86,22 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
         fun newInstance() = WeatherFragment()
     }
 
-    override fun showProgress() {
-        swipeContainer.isRefreshing = true
-    }
-
-    override fun hideProgress() {
-        textViewError.visibility = View.GONE
-        swipeContainer.isRefreshing = false
+    fun hideProgress() {
+        //swipeContainer.isRefreshing = false
+        hideProgressBar()
     }
 
     /**
      * Showing Error
      */
-    override fun showError(error: String) {
+    fun showError(error: String) {
         hideProgress()
         when (error) {
             context?.getString(R.string.err_nointernet) -> {
                 (activity as MainActivity).showError(getString(R.string.err_nointernet), Snackbar.LENGTH_INDEFINITE)
             }
             context?.getString(R.string.err_invalid_city_name) -> {
-                textViewError.visibility = View.GONE
+                hideError()
                 (activity as MainActivity).showError(
                     getString(R.string.err_invalid_city_name),
                     Snackbar.LENGTH_INDEFINITE
@@ -102,10 +109,10 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
             }
             else -> {
                 if (error.isEmpty()) {
-                    textViewError.visibility = View.GONE
+                    showErrorBase("Error")
+                } else {
+                    showErrorBase(error)
                 }
-                textViewError.visibility = View.VISIBLE
-                textViewError.text = error
             }
         }
     }
@@ -114,9 +121,12 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
      * Initialize and setup for ui elements
      */
     override fun initialize() {
+
+        Handler().postDelayed(Runnable { hideProgress() }, 3000)
+
+
         searchedCityName = autocompleteTextViewWeather.text.toString()
         (activity as MainActivity).showError("London Weather Forecat")
-        getViewModel().setNavigator(this)
         autocompleteTextViewWeather.setOnItemClickListener { adapterView, view, i, l ->
             searchedCityName = autocompleteTextViewWeather.text.toString()
             (activity as MainActivity).setToolbarTitle(searchedCityName)
@@ -126,19 +136,6 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
             getViewModel().mutableWeatherList.value?.let { weatherAdapter.updateWeatherListItems(it) }
         }
 
-        buttonSearch.setOnClickListener {
-            onSearchCLick()
-        }
-    }
-
-    /**
-     * Search Button Click
-     */
-    fun onSearchCLick() {
-        searchedCityName = autocompleteTextViewWeather.text.toString().toLowerCase().trim()
-        searchedCityName.let { it ->
-            getViewModel().searchCityWeather(activity as FragmentActivity, it)
-        }
     }
 
     /**
@@ -180,7 +177,7 @@ class WeatherFragment : BaseFragment<FragmentWeatherBinding, WeatherViewModel>()
             })
 
         getViewModel().getProgressStatus()?.observe(this, Observer {
-            if (it) showProgress() else hideProgress()
+            if (it) showProgressBar() else hideProgress()
         })
 
         getViewModel().getErrorStatus()?.observe(this, Observer {
