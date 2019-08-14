@@ -251,7 +251,6 @@ class WeatherViewModel constructor(application: Application) : BaseViewModel(app
 
                     if (it.list.isNotEmpty()) {
                         // getName()
-                        cityName?.value = "Updated"
                         mutableWeatherList.value = it.list
                         adapter.updateWeatherListItems(it.list)
                         isRefreshing.value = false
